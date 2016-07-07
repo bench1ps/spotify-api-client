@@ -1,6 +1,6 @@
 {
     "name": "bench1ps/spotify-api-client",
-    "description": "A library to interract with Spotify API",
+    "description": "A library to interact with Spotify API",
     "authors": [
         {
             "name": "Benjamin Fraud",
@@ -8,8 +8,7 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": "^6.2",
-        "symfony/console": "^3.1"
+        "guzzlehttp/guzzle": "^6.2"
     },
     "autoload": {
         "psr-0": { "Bench1ps\\": ["src/", "examples/"] }
