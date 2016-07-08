@@ -44,7 +44,7 @@ class SpotifyClient
     {
         $this->sessionHandler = $sessionHandler;
         $this->httpClient = new Client([
-            'base_uri' => self::BASE_URI,
+            'base_url' => self::BASE_URI,
         ]);
     }
 
@@ -66,7 +66,7 @@ class SpotifyClient
 
         $response = $this->request('GET', self::ENDPOINT_ME, $options);
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody());
     }
 
     /**
@@ -96,7 +96,7 @@ class SpotifyClient
 
         $response = $this->request('GET', self::ENDPOINT_ME_TOP_ARTISTS, $options);
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody());
     }
 
     /**
@@ -126,7 +126,7 @@ class SpotifyClient
 
         $response = $this->request('GET', self::ENDPOINT_ME_TOP_TRACKS, $options);
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody());
     }
 
     /**
@@ -179,7 +179,7 @@ class SpotifyClient
 
         $response = $this->request('GET', self::ENDPOINT_RECOMMENDATIONS, $options);
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody());
     }
 
     /**
@@ -188,6 +188,8 @@ class SpotifyClient
      * @param string $name
      * @param bool   $public
      * @param null   $userId
+     *
+     * @return \stdClass
      *
      * @throws SessionException
      */
@@ -209,7 +211,9 @@ class SpotifyClient
             ])
         ];
 
-        $this->request('POST', str_replace('{user_id}', $userId, self::ENDPOINT_PLAYLIST_CREATE), $options);
+        $response = $this->request('POST', str_replace('{user_id}', $userId, self::ENDPOINT_PLAYLIST_CREATE), $options);
+
+        return json_decode($response->getBody());
     }
 
     /**
@@ -264,14 +268,21 @@ class SpotifyClient
      * @param string $path
      * @param array  $options
      *
-     * @return \GuzzleHttp\Psr7\Response
+     * @return \GuzzleHttp\Message\ResponseInterface
      *
      * @throws SpotifyClientException
      */
     private function request($method, $path, array $options = [])
     {
         try {
-            return $this->httpClient->request($method, $path, $options);
+            switch ($method) {
+                case 'GET':
+                    return $this->httpClient->get($path, $options);
+                case 'POST':
+                    return $this->httpClient->post($path, $options);
+                default:
+                    throw new \Exception("Unknown method $method");
+            }
         } catch (\Exception $e) {
             throw new SpotifyClientException($e);
         }

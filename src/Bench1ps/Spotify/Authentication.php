@@ -36,7 +36,7 @@ class Authentication
     {
         $this->configuration = $configuration;
         $this->httpClient = new Client([
-            'base_uri' => self::BASE_URI,
+            'base_url' => self::BASE_URI,
         ]);
         $this->sessionHandler = $sessionHandler;
     }
@@ -82,7 +82,7 @@ class Authentication
                 $this->configuration['client_secret'],
                 'basic'
             ],
-            'form_params' => [
+            'body' => [
                 'grant_type' => 'authorization_code',
                 'code' => $authorizationCode,
                 'redirect_uri' => $this->configuration['redirect_uri'],
@@ -90,7 +90,7 @@ class Authentication
         ];
 
         $response = $this->request('POST', self::ENDPOINT_TOKEN, $options);
-        $body = json_decode($response->getBody()->getContents(), true);
+        $body = $response->json();
         $this->sessionHandler->addSession(new Session(uniqid(), $body['access_token'], $body['refresh_token'], $body['expires_in']));
     }
 
@@ -106,15 +106,15 @@ class Authentication
                 $this->configuration['client_secret'],
                 'basic'
             ],
-            'form_params' => [
+            'body' => [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->sessionHandler->getCurrentSession()->getRefreshToken(),
             ]
         ];
 
         $response = $this->request('POST', self::ENDPOINT_TOKEN, $options);
-        $body = json_decode($response->getBody()->getContents(), true);
-        $this->sessionHandler->getCurrentSession()->refreshToken($body['access_token'], $body['expires_in']);
+        $body = json_decode($response->getBody());
+        $this->sessionHandler->getCurrentSession()->refreshToken($body->access_token, $body->expires_in);
     }
 
     /**
@@ -130,14 +130,21 @@ class Authentication
      * @param string $path
      * @param array  $options
      *
-     * @return \GuzzleHttp\Psr7\Response
+     * @return \GuzzleHttp\Message\ResponseInterface
      *
      * @throws AuthenticationException
      */
     private function request($method, $path, array $options = [])
     {
         try {
-            return $this->httpClient->request($method, $path, $options);
+            switch ($method) {
+                case 'GET':
+                    return $this->httpClient->get($path, $options);
+                case 'POST':
+                    return $this->httpClient->post($path, $options);
+                default:
+                    throw new \Exception("Unknown method $method");
+            }
         } catch (\Exception $e) {
             throw new AuthenticationException($e);
         }
