@@ -1,16 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require 'bootstrap.php';
 
 use Bench1ps\Spotify\Authentication;
 use Bench1ps\Spotify\Session\SessionHandler;
 
-$configuration = [
-    'client_id' => 'b3d3fa5d017043e78038b70f6990b840',
-    'redirect_uri' => 'http://localhost:8888/callback',
-];
-
+$credentials = SpotifyExample::load();
 $scopes = [
     'playlist-read-private',
     'playlist-read-collaborative',
@@ -28,7 +24,7 @@ $scopes = [
 ];
 
 $sessionHandler = new SessionHandler();
-$authentication = new Authentication($configuration, $sessionHandler);
+$authentication = new Authentication($credentials, $sessionHandler);
 $query = $authentication->getAuthorizationQuery($scopes);
 
 echo "> Call this URL to fetch an authorization code:\n";
