@@ -3,7 +3,7 @@
 
 require 'bootstrap.php';
 
-use Bench1ps\Spotify\Authentication;
+use Bench1ps\Spotify\Authorization;
 use Bench1ps\Spotify\Session\SessionHandler;
 
 $credentials = SpotifyExample::load();
@@ -24,7 +24,7 @@ $scopes = [
 ];
 
 $sessionHandler = new SessionHandler();
-$authentication = new Authentication($credentials, $sessionHandler);
+$authentication = new Authorization($credentials, $sessionHandler);
 $query = $authentication->getAuthorizationQuery($scopes);
 
 echo "> Call this URL to fetch an authorization code:\n";

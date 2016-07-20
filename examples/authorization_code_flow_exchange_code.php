@@ -3,7 +3,7 @@
 
 require 'bootstrap.php';
 
-use Bench1ps\Spotify\Authentication;
+use Bench1ps\Spotify\Authorization;
 use Bench1ps\Spotify\Session\SessionHandler;
 
 /** @var string $authorizationCode The authorization code provided after the user has approved the application */
@@ -11,7 +11,7 @@ $authorizationCode = 'AQDU6X2MLGMVBFFt95naFhqexBk91syHSoTbiC5zDp5j7HMa_JXGMdWvcd
 
 $credentials = SpotifyExample::load();
 $sessionHandler = new SessionHandler();
-$authentication = new Authentication($credentials, $sessionHandler);
+$authentication = new Authorization($credentials, $sessionHandler);
 $authentication->exchangeCode($authorizationCode);
 
 SpotifyExample::$credentials['access_token'] = $authentication->getCurrentSession()->getAccessToken();

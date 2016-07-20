@@ -3,7 +3,7 @@
 
 require 'bootstrap.php';
 
-use Bench1ps\Spotify\Authentication;
+use Bench1ps\Spotify\Authorization;
 use Bench1ps\Spotify\Session\SessionHandler;
 use Bench1ps\Spotify\Session\Session;
 
@@ -16,7 +16,7 @@ $configuration = [
 $credentials = SpotifyExample::load();
 $sessionHandler = new SessionHandler();
 $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], $credentials['refresh_token'], 3600));
-$authentication = new Authentication($configuration, $sessionHandler);
+$authentication = new Authorization($configuration, $sessionHandler);
 $authentication->refreshToken();
 
 SpotifyExample::$credentials['access_token'] = $authentication->getCurrentSession()->getAccessToken();

@@ -2,12 +2,12 @@
 
 namespace Bench1ps\Spotify;
 
-use Bench1ps\Spotify\Exception\AuthenticationException;
+use Bench1ps\Spotify\Exception\AuthorizationException;
 use Bench1ps\Spotify\Session\Session;
 use GuzzleHttp\Client;
 use Bench1ps\Spotify\Session\SessionHandler;
 
-class Authentication
+class Authorization
 {
     const BASE_URI = 'https://accounts.spotify.com';
     const ENDPOINT_AUTHORIZATION_FLOW = 'authorize';
@@ -132,7 +132,7 @@ class Authentication
      *
      * @return \GuzzleHttp\Message\ResponseInterface
      *
-     * @throws AuthenticationException
+     * @throws AuthorizationException
      */
     private function request($method, $path, array $options = [])
     {
@@ -146,7 +146,7 @@ class Authentication
                     throw new \Exception("Unknown method $method");
             }
         } catch (\Exception $e) {
-            throw new AuthenticationException($e);
+            throw new AuthorizationException($e);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Bench1ps\Spotify\Exception;
 
-class AuthenticationException extends \Exception
+class AuthorizationException extends \Exception
 {
     /**
      * @var \Exception
