@@ -4,9 +4,7 @@ namespace Bench1ps\Spotify;
 
 class TrackSpecification
 {
-    /**
-     * @var array
-     */
+    /** @var array List of supported attributes */
     private $attributes = [
         'min_acousticness',
         'max_acousticness',
@@ -52,9 +50,7 @@ class TrackSpecification
         'target_valence',
     ];
 
-    /**
-     * @var array
-     */
+    /** @var array The bag of attributes that define the specification */
     private $bag = [];
 
     /**
@@ -94,7 +90,7 @@ class TrackSpecification
     /**
      * @return array
      */
-    public function getBag()
+    public function all()
     {
         return $this->bag;
     }

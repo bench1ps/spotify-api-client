@@ -160,7 +160,7 @@ class SpotifyClient
         }
 
         if (null !== $specification) {
-            foreach ($specification->getBag() as $attribute => $value) {
+            foreach ($specification->all() as $attribute => $value) {
                 $options['query'][$attribute] = $value;
             }
         }
