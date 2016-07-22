@@ -44,7 +44,7 @@ class SessionHandler
 
         $this->sessions[$sessionId] = $session;
 
-        if (empty($this->currentSession[$sessionId])) {
+        if (empty($this->currentSession)) {
             $this->switchSession($sessionId);
         }
     }
