@@ -5,7 +5,7 @@ namespace Bench1ps\Spotify;
 class TrackSpecification
 {
     /** @var array List of supported attributes */
-    private $attributes = [
+    public static $attributes = [
         'min_acousticness',
         'max_acousticness',
         'taget_acousticness',
@@ -42,9 +42,9 @@ class TrackSpecification
         'min_tempo',
         'max_tempo',
         'target_tempo',
-        'min_timesignature',
-        'max_timesignature',
-        'target_timesignature',
+        'min_time_signature',
+        'max_time_signature',
+        'target_time_signature',
         'min_valence',
         'max_valence',
         'target_valence',
@@ -63,7 +63,7 @@ class TrackSpecification
      */
     public function add($attribute, $value)
     {
-        if (!in_array($attribute, $this->attributes)) {
+        if (!in_array($attribute, self::$attributes)) {
             throw new \Exception("$attribute is not a valid attribute");
         }
 
@@ -80,7 +80,7 @@ class TrackSpecification
      */
     public function get($attribute)
     {
-        if (!in_array($attribute, $this->attributes)) {
+        if (!in_array($attribute, self::$attributes)) {
             throw new \Exception("$attribute is not a valid attribute");
         }
 
@@ -93,5 +93,18 @@ class TrackSpecification
     public function all()
     {
         return $this->bag;
+    }
+
+    /**
+     * @return string
+     */
+    public function toString()
+    {
+        $elements = [];
+        foreach ($this->bag as $name => $value) {
+            $elements[] = sprintf("%s: %s", $name, $value);
+        }
+
+        return implode(', ', $elements);
     }
 }
