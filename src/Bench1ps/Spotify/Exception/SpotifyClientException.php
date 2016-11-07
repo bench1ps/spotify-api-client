@@ -11,13 +11,10 @@ class SpotifyClientException extends \Exception
 
     /**
      * @param \Exception $exception
-     * @param string     $method
-     * @param string     $path
-     * @param array      $options
      */
-    public function __construct(\Exception $exception, $method, $path, array $options = [])
+    public function __construct(\Exception $exception)
     {
-        parent::__construct("Could not perform Spotify API call $method $path: ".$exception->getMessage().(!empty($options) ? ' - Body: '.json_encode($options) : ''));
+        parent::__construct("Could not perform Spotify API call: ".$exception->getMessage());
 
         $this->exception = $exception;
     }

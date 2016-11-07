@@ -58,8 +58,12 @@ class SpotifyClient
     public function getCurrentUserProfile()
     {
         $this->assertSession();
+        $options = [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken())
+            ]
+        ];
 
-        $options  = $this->getDefaultOptions();
         $response = $this->request('GET', self::ENDPOINT_ME, $options);
 
         return json_decode($response->getBody());
@@ -79,13 +83,16 @@ class SpotifyClient
     public function getCurrentUserTopArtists($limit = 20, $offset = 0, $timeRange = self::TERM_MEDIUM)
     {
         $this->assertSession();
-        $options = array_merge($this->getDefaultOptions(), [
+        $options = [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken())
+            ],
             'query' => [
                 'limit' => $limit,
                 'offset' => $offset,
                 'time_range' => $timeRange
             ]
-        ]);
+        ];
 
         $response = $this->request('GET', self::ENDPOINT_ME_TOP_ARTISTS, $options);
 
@@ -106,13 +113,16 @@ class SpotifyClient
     public function getCurrentUserTopTracks($limit = 20, $offset = 0, $timeRange = self::TERM_MEDIUM)
     {
         $this->assertSession();
-        $options = array_merge($this->getDefaultOptions(), [
+        $options = [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken())
+            ],
             'query' => [
                 'limit' => $limit,
                 'offset' => $offset,
                 'time_range' => $timeRange
             ]
-        ]);
+        ];
 
         $response = $this->request('GET', self::ENDPOINT_ME_TOP_TRACKS, $options);
 
@@ -136,11 +146,14 @@ class SpotifyClient
     public function getRecommendations($limit = 20, $market = null, TrackSpecification $specification = null, array $seedArtists = [], array $seedGenres = [], array $seedTracks = [])
     {
         $this->assertSession();
-        $options = array_merge($this->getDefaultOptions(), [
+        $options = [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken())
+            ],
             'query' => [
                 'limit' => $limit
             ]
-        ]);
+        ];
 
         if (null !== $market) {
             $options['query']['market'] = $market;
@@ -170,8 +183,7 @@ class SpotifyClient
     }
 
     /**
-     * Creates a playlist on a user account.
-     * If no user is passed, will try to create the playlist on the current session.
+     * Creates a playlist on the user's account.
      *
      * @param string $name
      * @param bool   $public
@@ -188,13 +200,16 @@ class SpotifyClient
             $userId = $this->getCurrentUserProfile()->id;
         }
 
-        $options = $this->getDefaultOptions();
-        $options['headers']['Content-Type'] = 'application/json';
-        $options['body'] = json_encode([
-            'name' => $name,
-            'public' => $public
-        ]);
-
+        $options = [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken()),
+                'Content-Type' => 'application/json',
+            ],
+            'body' => json_encode([
+                'name' => $name,
+                'public' => $public
+            ])
+        ];
 
         $response = $this->request('POST', str_replace('{user_id}', $userId, self::ENDPOINT_PLAYLIST_CREATE), $options);
 
@@ -222,11 +237,15 @@ class SpotifyClient
             $userId = $this->getCurrentUserProfile()->id;
         }
 
-        $options = $this->getDefaultOptions();
-        $options['headers']['Content-Type'] = 'application/json';
-        $options['body'] = json_encode([
-            'uris' => $trackIds
-        ]);
+        $options = [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken()),
+                'Content-Type' => 'application/json',
+            ],
+            'body' => json_encode([
+                'uris' => $trackIds
+            ])
+        ];
 
         $path = str_replace('{user_id}', $userId, self::ENDPOINT_PLAYLIST_ADD_TRACKS);
         $path = str_replace('{playlist_id}', $playlistId, $path);
@@ -242,19 +261,6 @@ class SpotifyClient
         if (!$this->sessionHandler->isHandlingSession()) {
             throw new SessionException("An active session is required.");
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function getDefaultOptions()
-    {
-        return [
-            'headers' => [
-                'Authorization' => sprintf('Bearer %s', $this->sessionHandler->getCurrentSession()->getAccessToken())
-            ],
-            'timeout' => 5
-        ];
     }
 
     /**
@@ -278,7 +284,7 @@ class SpotifyClient
                     throw new \Exception("Unknown method $method");
             }
         } catch (\Exception $e) {
-            throw new SpotifyClientException($e, $method, $path, $options);
+            throw new SpotifyClientException($e);
         }
     }
 }

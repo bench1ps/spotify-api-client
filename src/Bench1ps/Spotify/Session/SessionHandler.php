@@ -17,7 +17,7 @@ class SessionHandler
     private $currentSession;
 
     /**
-     * @param string $sessionId
+     * @param mixed $sessionId
      *
      * @throws SessionException
      */
@@ -63,5 +63,15 @@ class SessionHandler
     public function isHandlingSession()
     {
         return null !== $this->currentSession;
+    }
+
+    /**
+     * @param mixed $sessionId
+     *
+     * @return bool
+     */
+    public function handlesSession($sessionId)
+    {
+        return isset($this->sessions[$sessionId]);
     }
 }
