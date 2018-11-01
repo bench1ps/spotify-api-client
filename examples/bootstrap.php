@@ -4,7 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 class SpotifyExample
 {
-    const CREDENTIALS_FILE_PATH = 'credentials/credentials.json';
+    const CREDENTIALS_FILE_PATH = __DIR__.'/credentials/credentials.json';
 
     /**
      * @var string
@@ -32,8 +32,60 @@ class SpotifyExample
      */
     public static function dump()
     {
-        $fp = fopen('credentials/credentials.json', 'w+');
+        $fp = fopen(self::CREDENTIALS_FILE_PATH, 'w+');
         fwrite($fp, json_encode(self::$credentials, JSON_PRETTY_PRINT));
         fclose($fp);
+    }
+
+    /**
+     * @param string $message
+     */
+    public static function printInfo(string $message)
+    {
+        echo sprintf("> %s\n", $message);
+    }
+
+    /**
+     * @param string $message
+     */
+    public static function printSuccess(string $message)
+    {
+        echo sprintf("\033[32m> %s\033[0m\n", $message);
+    }
+
+    /**
+     * Prints an exception in the CLI and rethrows it.
+     *
+     * @param Throwable $e
+     *
+     * @throws Throwable
+     */
+    public static function printException(Throwable $e)
+    {
+        echo sprintf("\033[31m> %s\033[0m\n", $e->getMessage());
+
+        throw $e;
+    }
+
+    /**
+     * @param array         $items
+     * @param bool          $withKeys
+     * @param callable|null $function
+     */
+    public static function printList(array $items, bool $withKeys = false, callable $function = null)
+    {
+        if (is_null($function)) {
+            $function = function ($item) {
+                return $item;
+            };
+        }
+
+        foreach ($items as $key => $item) {
+            echo sprintf(
+                "- %s%s\n",
+                $withKeys ? $key.': ' : '',
+                $function($item)
+            );
+        }
     }
 }

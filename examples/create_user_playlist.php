@@ -3,21 +3,24 @@
 
 require 'bootstrap.php';
 
-use Bench1ps\Spotify\SpotifyClient;
+use Bench1ps\Spotify\API\API;
 use Bench1ps\Spotify\Session\SessionHandler;
 use Bench1ps\Spotify\Session\Session;
-use Bench1ps\Spotify\Exception\SpotifyClientException;
-
-$credentials = SpotifyExample::load();
-$sessionHandler = new SessionHandler();
-$sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
-$client = new SpotifyClient($sessionHandler);
+use Bench1ps\Spotify\Exception\SpotifyException;
 
 try {
-    $result = $client->createUserPlaylist(sprintf('Example playlist (%s)', date('Y-m-d H:i:s')), false);
-} catch (SpotifyClientException $e) {
-    echo $e->getMessage()."\n";
-    die;
-}
+    $credentials = SpotifyExample::load();
+    $sessionHandler = new SessionHandler();
+    $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
 
-echo sprintf("Playlist %s successfully created\n", $result->id);
+    $client = new API($sessionHandler);
+    $result = $client->createUserPlaylist(sprintf('Example playlist (%s)', date('Y-m-d H:i:s')), false);
+
+    SpotifyExample::printSuccess(sprintf(
+        "Playlist %s successfully created (%s)",
+        $result->id,
+        $result->external_urls->spotify
+    ));
+} catch (SpotifyException $e) {
+    SpotifyExample::printException($e);
+}

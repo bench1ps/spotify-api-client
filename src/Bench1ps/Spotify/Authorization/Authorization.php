@@ -1,31 +1,23 @@
 <?php
 
-namespace Bench1ps\Spotify;
+namespace Bench1ps\Spotify\Authorization;
 
-use Bench1ps\Spotify\Exception\AuthorizationException;
+use Bench1ps\Spotify\Client;
+use Bench1ps\Spotify\Exception\ClientException;
+use Bench1ps\Spotify\Session\Exception\SessionException;
 use Bench1ps\Spotify\Session\Session;
-use GuzzleHttp\Client;
 use Bench1ps\Spotify\Session\SessionHandler;
 
-class Authorization
+class Authorization extends Client
 {
     const BASE_URI = 'https://accounts.spotify.com';
     const ENDPOINT_AUTHORIZATION_FLOW = 'authorize';
     const ENDPOINT_TOKEN = 'api/token';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $configuration = [];
 
-    /**
-     * @var Client
-     */
-    private $httpClient;
-
-    /**
-     * @var SessionHandler
-     */
+    /** @var SessionHandler */
     private $sessionHandler;
 
     /**
@@ -34,10 +26,9 @@ class Authorization
      */
     public function __construct(array $configuration, SessionHandler $sessionHandler)
     {
+        parent::__construct(self::BASE_URI);
+
         $this->configuration = $configuration;
-        $this->httpClient = new Client([
-            'base_url' => self::BASE_URI,
-        ]);
         $this->sessionHandler = $sessionHandler;
     }
 
@@ -60,9 +51,12 @@ class Authorization
             'client_id' => $this->configuration['client_id'],
             'response_type' => 'code',
             'redirect_uri' => $this->configuration['redirect_uri'],
-            'scopes' => implode(',', $scopes),
-            'show_dialog' => $force
+            'scope' => implode(',', $scopes),
         ];
+
+        if ($force) {
+            $params['show_dialog'] = 'true';
+        }
 
         if (null !== $state) {
             $params['state'] = $state;
@@ -73,6 +67,9 @@ class Authorization
 
     /**
      * @param string $authorizationCode
+     *
+     * @throws SessionException
+     * @throws ClientException
      */
     public function exchangeCode($authorizationCode)
     {
@@ -80,9 +77,9 @@ class Authorization
             'auth' => [
                 $this->configuration['client_id'],
                 $this->configuration['client_secret'],
-                'basic'
+                'basic',
             ],
-            'body' => [
+            'form_params' => [
                 'grant_type' => 'authorization_code',
                 'code' => $authorizationCode,
                 'redirect_uri' => $this->configuration['redirect_uri'],
@@ -90,13 +87,15 @@ class Authorization
         ];
 
         $response = $this->request('POST', self::ENDPOINT_TOKEN, $options);
-        $body = $response->json();
-        $this->sessionHandler->addSession(new Session(uniqid(), $body['access_token'], $body['refresh_token'], $body['expires_in']));
+        $body = json_decode($response->getBody()->getContents());
+        $this->sessionHandler->addSession(new Session(uniqid(), $body->access_token, $body->refresh_token, $body->expires_in));
     }
 
     /**
      * Fetches a new access token from the current session's refresh token.
      * The newly acquired access token may be used to perform new API calls as long as it is valid.
+     *
+     * @throws ClientException
      */
     public function refreshToken()
     {
@@ -104,16 +103,16 @@ class Authorization
             'auth' => [
                 $this->configuration['client_id'],
                 $this->configuration['client_secret'],
-                'basic'
+                'basic',
             ],
-            'body' => [
+            'form_params' => [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->sessionHandler->getCurrentSession()->getRefreshToken(),
-            ]
+            ],
         ];
 
         $response = $this->request('POST', self::ENDPOINT_TOKEN, $options);
-        $body = json_decode($response->getBody());
+        $body = json_decode($response->getBody()->getContents());
         $this->sessionHandler->getCurrentSession()->refreshToken($body->access_token, $body->expires_in);
     }
 
@@ -123,30 +122,5 @@ class Authorization
     public function getCurrentSession()
     {
         return $this->sessionHandler->getCurrentSession();
-    }
-
-    /**
-     * @param string $method
-     * @param string $path
-     * @param array  $options
-     *
-     * @return \GuzzleHttp\Message\ResponseInterface
-     *
-     * @throws AuthorizationException
-     */
-    private function request($method, $path, array $options = [])
-    {
-        try {
-            switch ($method) {
-                case 'GET':
-                    return $this->httpClient->get($path, $options);
-                case 'POST':
-                    return $this->httpClient->post($path, $options);
-                default:
-                    throw new \Exception("Unknown method $method");
-            }
-        } catch (\Exception $e) {
-            throw new AuthorizationException($e);
-        }
     }
 }

@@ -4,24 +4,16 @@ namespace Bench1ps\Spotify\Session;
 
 class Session
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $sessionId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $accessToken;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $refreshToken;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $expiresIn;
 
     /**

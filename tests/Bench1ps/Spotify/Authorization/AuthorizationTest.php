@@ -1,6 +1,6 @@
 <?php
 
-namespace Bench1ps\Spotify;
+namespace Bench1ps\Spotify\Authorization;
 
 class AuthorizationTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,12 +10,10 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
     private static $configuration = [
         'client_id' => 'foobar',
         'client_secret' => 'barbaz',
-        'redirect_uri' => 'http://foobar/callback'
+        'redirect_uri' => 'http://foobar/callback',
     ];
 
-    /**
-     * @var Authorization
-     */
+    /** @var Authorization */
     private $authorization;
 
     /**
@@ -33,9 +31,9 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array        $scopes
-     * @param bool         $force
-     * @param string|null  $state
+     * @param array       $scopes
+     * @param bool        $force
+     * @param string|null $state
      *
      * @test
      *
@@ -47,8 +45,8 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
         parse_str(parse_url($url)['query'], $params);
 
         if (!empty($scopes)) {
-            $this->assertNotEmpty($params['scopes']);
-            $parts = explode(',', $params['scopes']);
+            $this->assertNotEmpty($params['scope']);
+            $parts = explode(',', $params['scope']);
             foreach ($scopes as $scope) {
                 $this->assertContains($scope, $parts);
             }
@@ -56,7 +54,7 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
 
         if ($force) {
             $this->assertNotEmpty($params['show_dialog']);
-            $this->assertEquals($force, $params['show_dialog']);
+            $this->assertEquals('true', $params['show_dialog']);
         }
 
         if (null !== $state) {

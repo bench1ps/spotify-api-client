@@ -3,32 +3,27 @@
 
 require 'bootstrap.php';
 
-use Bench1ps\Spotify\SpotifyClient;
+use Bench1ps\Spotify\API\API;
 use Bench1ps\Spotify\Session\SessionHandler;
 use Bench1ps\Spotify\Session\Session;
-use Bench1ps\Spotify\Exception\SpotifyClientException;
+use Bench1ps\Spotify\Exception\SpotifyException;
 
 $limit = 10;
 $offset = 0;
-$timeRange = SpotifyClient::TERM_LONG;
-
-$credentials = SpotifyExample::load();
-$sessionHandler = new SessionHandler();
-$sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
-$client = new SpotifyClient($sessionHandler);
+$timeRange = API::RANGE_LONG;
 
 try {
-    $result = $client->getCurrentUserTopTracks($limit, $offset, $timeRange);
-} catch (SpotifyClientException $e) {
-    echo $e->getMessage()."\n";
-    die;
-}
+    $credentials = SpotifyExample::load();
+    $sessionHandler = new SessionHandler();
+    $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
 
-echo "User's top tracks:\n";
-foreach ($result->items as $item) {
-    $artists = [];
-    foreach ($item->artists as $artist) {
-        $artists[] = $artist->name;
-    }
-    echo "- ".$item->name." by ".implode(',', $artists)." (".$item->external_urls->spotify.")\n";
+    $client = new API($sessionHandler);
+    $result = $client->getCurrentUserTopTracks($limit, $offset, $timeRange);
+
+    SpotifyExample::printSuccess(sprintf('Found %d top tracks (%s):', count($result->items), $timeRange));
+    SpotifyExample::printList($result->items, function (stdClass $track) {
+        return sprintf('%s by %s (%s)', $track->name, $track->artists[0]->name, $track->external_urls->spotify);
+    });
+} catch (SpotifyException $e) {
+    SpotifyExample::printException($e);
 }

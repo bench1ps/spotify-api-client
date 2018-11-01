@@ -8,22 +8,24 @@ use Bench1ps\Spotify\Session\SessionHandler;
 use Bench1ps\Spotify\Session\Session;
 use Bench1ps\Spotify\Exception\SpotifyException;
 
-$nbArtists = 10;
-$offset = 0;
-$timeRange = API::RANGE_LONG;
-
 try {
     $credentials = SpotifyExample::load();
     $sessionHandler = new SessionHandler();
     $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
 
     $client = new API($sessionHandler);
-    $result = $client->getCurrentUserTopArtists($nbArtists, $offset, $timeRange);
+    $result = $client->getCurrentUserProfile();
 
-    SpotifyExample::printSuccess(sprintf('Found %d top artists (%s):', count($result->items), $timeRange));
-    SpotifyExample::printList($result->items, function (stdClass $artist) {
-        return sprintf('%s (%s)', $artist->name, $artist->external_urls->spotify);
-    });
+    SpotifyExample::printSuccess('Current user profile information:');
+    SpotifyExample::printList([
+        'Name' => $result->display_name,
+        'E-mail' => $result->email,
+        'Country' => $result->country,
+        'Birth date' => $result->birthdate,
+        'Public URI' => $result->external_urls->spotify,
+        'Number of followers' => $result->followers->total,
+        'Spotify ID' => $result->id,
+    ], true);
 } catch (SpotifyException $e) {
     SpotifyExample::printException($e);
 }
