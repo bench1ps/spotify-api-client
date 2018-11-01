@@ -4,9 +4,7 @@ namespace Bench1ps\Spotify\Authorization;
 
 class AuthorizationTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private static $configuration = [
         'client_id' => 'foobar',
         'client_secret' => 'barbaz',
@@ -15,10 +13,6 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
 
     /** @var Authorization */
     private $authorization;
-
-    /**
-     * @var \Bench1ps\Spotify\Session\SessionHandler
-     */
     private $sessionHandler;
 
     /**
