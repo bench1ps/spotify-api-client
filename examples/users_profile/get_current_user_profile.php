@@ -1,20 +1,13 @@
 #!/usr/bin/env php
 <?php
 
-require 'bootstrap.php';
+require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\API\API;
-use Bench1ps\Spotify\Session\SessionHandler;
-use Bench1ps\Spotify\Session\Session;
 use Bench1ps\Spotify\Exception\SpotifyException;
 
 try {
-    $credentials = SpotifyExample::load();
-    $sessionHandler = new SessionHandler();
-    $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
-
-    $client = new API($sessionHandler);
-    $result = $client->getCurrentUserProfile();
+    $API = SpotifyExample::loadAPI();
+    $result = $API->getCurrentUserProfile();
 
     SpotifyExample::printSuccess('Current user profile information:');
     SpotifyExample::printList([

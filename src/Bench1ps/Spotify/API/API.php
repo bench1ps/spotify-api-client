@@ -13,13 +13,18 @@ class API extends Client
      * Supported API endpoints.
      */
     const BASE_URI = 'https://api.spotify.com';
-    const ENDPOINT_ME = 'v1/me';
-    const ENDPOINT_ME_TOP_ARTISTS = 'v1/me/top/artists';
-    const ENDPOINT_ME_TOP_TRACKS = 'v1/me/top/tracks';
+    const ENDPOINT_GET_ALBUM = '/v1/albums/{album_id}';
+    const ENDPOINT_ME = '/v1/me';
+    const ENDPOINT_ME_TOP_ARTISTS = '/v1/me/top/artists';
+    const ENDPOINT_ME_TOP_TRACKS = '/v1/me/top/tracks';
     const ENDPOINT_RECOMMENDATIONS = 'v1/recommendations';
     const ENDPOINT_PLAYLIST_CREATE = '/v1/users/{user_id}/playlists';
     const ENDPOINT_PLAYLIST_ADD_TRACKS = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
     const ENDPOINT_USER_PUBLIC_PROFILE = '/v1/users/{user_id}';
+    const ENDPOINT_USER_DEVICES = '/v1/me/player/devices';
+    const ENDPOINT_PAUSE_PLAYBACK = '/v1/me/player/pause';
+    const ENDPOINT_START_OR_RESUME_PLAYBACK = '/v1/me/player/play';
+    const ENDPOINT_TRANSFER_PLAYBACK = '/v1/me/player';
 
     /**
      * Available ranges for calls returning top artists and tracks.
@@ -85,6 +90,30 @@ class API extends Client
         parent::__construct(self::BASE_URI);
 
         $this->sessionHandler = $sessionHandler;
+    }
+
+    /**
+     * Returns an album information.
+     *
+     * @param string $albumId
+     *
+     * @return \stdClass
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function getAlbum(string $albumId): \stdClass
+    {
+        $this->assertSession();
+
+        $options = array_merge($this->getDefaultOptions(), [
+            'query' => [
+                'id' => $albumId,
+            ],
+        ]);
+
+        $response = $this->request('GET', str_replace('{album_id}', $albumId, self::ENDPOINT_GET_ALBUM), $options);
+
+        return json_decode($response->getBody());
     }
 
     /**
@@ -292,6 +321,106 @@ class API extends Client
         $path = str_replace('{playlist_id}', $playlistId, $path);
 
         $this->request('POST', $path, $options);
+    }
+
+    /**
+     * Returns the current user's available devices.
+     *
+     * @return \stdClass
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function getUserDevices(): \stdClass
+    {
+        $this->assertSession();
+        $response = $this->request('GET', self::ENDPOINT_USER_DEVICES, $this->getDefaultOptions());
+
+        return json_decode($response->getBody());
+    }
+
+    /**
+     * Pauses the current user's playback.
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function pausePlayback()
+    {
+        $this->assertSession();
+        $this->request('PUT', self::ENDPOINT_PAUSE_PLAYBACK, $this->getDefaultOptions());
+    }
+
+    /**
+     * Starts or resumes the playback on a current user's device.
+     * Only one parameter of either $context or $URIs should be specified.
+     *
+     * @param string|null $deviceId   The identifier of the user's device.
+     *                                If omitted, the playback will be started or resumed on the user's active device.
+     * @param string|null $contextURI Spotify URI of the context to play. Can be either an album, artist, or playlist.
+     * @param array       $URIs       Array of Spotify track URIs to play.
+     * @param int|string  $offset     From where in the context the playback should start.
+     *                                Use this parameter only when $contextURI is an album or a playlist, or when $URIs in not empty.
+     *                                Can be either an integer or a Spotify URI.
+     * @param null        $position   From where the playback should start in milliseconds.
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function startOrResumePlayback(string $deviceId = null, string $contextURI = null, array $URIs = [], $offset = null, $position = null)
+    {
+        $this->assertSession();
+
+        $options = $this->getDefaultOptions();
+        if ($deviceId) {
+            $options['query']['device_id'] = $deviceId;
+        }
+
+        if ($contextURI) {
+            $options['json']['context_uri'] = $contextURI;
+        }
+
+        if ($URIs) {
+            $options['json']['uris'] = $URIs;
+        }
+
+        if ($offset) {
+            if (is_int($offset)) {
+                $options['json']['offset'] = $offset;
+            } elseif (is_string($offset)) {
+                $options['json']['offset'] = [
+                    'uri' => $offset,
+                ];
+            }
+        }
+
+        if ($position) {
+            $options['form_params']['position_ms'] = $position;
+        }
+
+        $this->request('PUT', self::ENDPOINT_START_OR_RESUME_PLAYBACK, $options);
+    }
+
+    /**
+     * Transfer the playback from the active device to another device.
+     *
+     * @param string $deviceId
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function transferPlayback(string $deviceId)
+    {
+        $this->assertSession();
+
+        $options = array_merge($this->getDefaultOptions(), [
+            'json' => [
+                'device_ids' => [
+                    $deviceId,
+                ]
+            ],
+        ]);
+
+        $this->request('PUT', self::ENDPOINT_TRANSFER_PLAYBACK, $options);
     }
 
     /**

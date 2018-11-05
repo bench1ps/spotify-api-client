@@ -1,10 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-require 'bootstrap.php';
+require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\Authorization\Authorization;
-use Bench1ps\Spotify\Session\SessionHandler;
 use Bench1ps\Spotify\Exception\SpotifyException;
 
 /**
@@ -13,12 +11,10 @@ use Bench1ps\Spotify\Exception\SpotifyException;
  * The authorization code provided after the user has approved the application.
  * Use the authorization_code_flow_get_code example to get a new one.
  */
-$authorizationCode = 'AQCL-loLuhkz1S1JuXL9FBGnhyZxjmWi22ah1aTv-CZAdGAt-BNE8NnucXgZloHfv0Ja74HW3rY5Q0jRd2r6FtAYgknaMc425T8bZokYu37HXloieuisHpoGLBrwJa9B56eh1d3XUBsECr1u9Fn_QCxpPCrVECK2oGfeOdGbJts7QSQ2FcGu_Q0tiyh_-mHZe1YZDP1kWetXBs-raG3X9g0eM840DXVEV4Maq30WONSVJDO7Z5hYSz-1iTlRdB5P6coTENTDPpRRe5gTKnb7B289WpQr_P_yXdwhAtZJ06-DjiqnC-U4RB3CT7_Oxp3bv5o_RV4iRMYUEI1DnU6nKE1bAB2qRN1Z8oNRrkSOR64n_nHwSo9dGYHdvMuOiA8MmNqqFn1BZVa4dPw1Lh51J62X2FQWpCukOv99X7uPXkZiFxsCBqCAMGJWerzPEpMeyw0nZizmtqyVUbQm7en-pAXvD3iBjbML6Q3onJ33Zcr5qd6nXJGjAv9GOyP2uUUmAGdo56lVw3-u_T5mx8Ed6R7qTCqjo2W8OTTKNw';
+$authorizationCode = 'AQBR2Y2OEuF0Tdjhz0xuHbvvqBeA_Gtlr2RtpPIhugIBh9drEEcn-3EN4E9EEF3pL9c95IKCAKxsjqc0d2c3eSSOoZ8e0CQwjYUkRfsrC_0PVstSLsLd8SW7rF2ckjnFp4HVxczv6nGoaFBoL5PpA5oGggZX-8rLLn5g0FKYdwUpOVjRLfxFZtMUSWIXxYIW4zYMZfv5t9v-vzKYAipw4eHTcvSeTCBJ-fCPk6tpXPGAZO4_fF8fGmtpdDrxRDKYgIwEkkPxj6XOk3JkiwjKfWMFKkR3DrdEerki3GcBRkjWfje8sfYMq-zkCdp3sHOmmPcAEHuz-C1uKnDUzi8iueJcqbIB15is7ZlkjL_rKRdWI0KTsXTGEkxwyjqfoxxchSsIVkqlXPvSDaU0mVlS-zSrGBE_CBkNd4Ezsg3n_dYPl5PzPrCK_NZn4u5i8K2YCo2NXyEc00LbVpHod15Dbpis5Qc8AztraMM2NX8hLmjVpOQxxQ4Z1qjykN2iwJCEumI_-DKhwCmJLrjCUOnRGIsunuF37VLIB_34I1LM6419Nu-xZyZJNocqTApOm1n3yGGeprx6A0abuq0V0VeVpCWeYn9qfq_MEK5h5U6CnWx2cIjrHIWegomJmsKHLFAvToNtZGCvFwW77qzQ6hst';
 
 try {
-    $credentials = SpotifyExample::load();
-    $sessionHandler = new SessionHandler();
-    $authentication = new Authorization($credentials, $sessionHandler);
+    $authentication = SpotifyExample::loadAuthorization();
     $authentication->exchangeCode($authorizationCode);
 
     SpotifyExample::$credentials['access_token'] = $authentication->getCurrentSession()->getAccessToken();

@@ -1,11 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-require 'bootstrap.php';
+require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\API\API;
-use Bench1ps\Spotify\Session\SessionHandler;
-use Bench1ps\Spotify\Session\Session;
 use Bench1ps\Spotify\Exception\SpotifyException;
 
 /**
@@ -21,12 +18,8 @@ $trackIds = [
 ];
 
 try {
-    $credentials = SpotifyExample::load();
-    $sessionHandler = new SessionHandler();
-    $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
-
-    $client = new API($sessionHandler);
-    $client->addTracksToUserPlaylist($playlistId, $trackIds);
+    $API = SpotifyExample::loadAPI();
+    $result = $API->addTracksToUserPlaylist($playlistId, $trackIds);
 
     SpotifyExample::printSuccess(sprintf("Successfully added %d track(s) to user's playlist %s", count($trackIds), $playlistId));
 } catch (SpotifyException $e) {

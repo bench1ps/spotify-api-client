@@ -2,21 +2,56 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Bench1ps\Spotify\Session\SessionHandler;
+use Bench1ps\Spotify\Session\Session;
+use Bench1ps\Spotify\Authorization\Authorization;
+use Bench1ps\Spotify\API\API;
+
 class SpotifyExample
 {
-    const CREDENTIALS_FILE_PATH = __DIR__.'/credentials/credentials.json';
+    const CREDENTIALS_FILE_PATH = __DIR__.'/credentials.json';
 
-    /**
-     * @var string
-     */
+    /** @var array */
     static $credentials;
 
     /**
-     * Loads the credentials file
+     * @return Authorization
+     * @throws \Bench1ps\Spotify\Session\Exception\SessionException
+     */
+    public static function loadAuthorization(): Authorization
+    {
+        $credentials = self::loadCredentials();
+        $sessionHandler = new SessionHandler();
+        $sessionHandler->addSession(
+            new Session('foobar', $credentials['access_token'], $credentials['refresh_token'], 3600)
+        );
+
+        return new Authorization([
+            'client_id' => $credentials['client_id'],
+            'client_secret' => $credentials['client_secret'],
+            'redirect_uri' => $credentials['redirect_uri'],
+        ], $sessionHandler);
+    }
+
+    /**
+     * @return API
+     * @throws \Bench1ps\Spotify\Session\Exception\SessionException
+     */
+    public static function loadAPI(): API
+    {
+        $credentials = self::loadCredentials();
+        $sessionHandler = new SessionHandler();
+        $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
+
+        return new API($sessionHandler);
+    }
+
+    /**
+     * Loads the credentials file.
      *
      * @return array
      */
-    public static function load()
+    private static function loadCredentials()
     {
         if (!file_exists(self::CREDENTIALS_FILE_PATH)) {
             die("> Credentials file was not found. Please copy the file named credentials.dist.json to credentials.json and add your own parameters.\n");
@@ -28,7 +63,7 @@ class SpotifyExample
     }
 
     /**
-     * Dumps the updated credentials file
+     * Dumps the updated credentials file.
      */
     public static function dump()
     {
