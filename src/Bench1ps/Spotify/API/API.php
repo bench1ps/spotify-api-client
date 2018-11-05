@@ -25,6 +25,7 @@ class API extends Client
     const ENDPOINT_PAUSE_PLAYBACK = '/v1/me/player/pause';
     const ENDPOINT_START_OR_RESUME_PLAYBACK = '/v1/me/player/play';
     const ENDPOINT_TRANSFER_PLAYBACK = '/v1/me/player';
+    const ENDPOINT_TRACK_ANALYSIS = '/v1/audio-analysis/{track_id}';
 
     /**
      * Available ranges for calls returning top artists and tracks.
@@ -411,7 +412,6 @@ class API extends Client
     public function transferPlayback(string $deviceId)
     {
         $this->assertSession();
-
         $options = array_merge($this->getDefaultOptions(), [
             'json' => [
                 'device_ids' => [
@@ -421,6 +421,23 @@ class API extends Client
         ]);
 
         $this->request('PUT', self::ENDPOINT_TRANSFER_PLAYBACK, $options);
+    }
+
+    /**
+     * Returns a detailed audio analysis of a track.
+     *
+     * @param string $trackId
+     *
+     * @return \stdClass
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function getTrackAnalysis(string $trackId): \stdClass
+    {
+        $this->assertSession();
+        $response = $this->request('GET', str_replace('{track_id}', $trackId, self::ENDPOINT_TRACK_ANALYSIS), $this->getDefaultOptions());
+
+        return json_decode($response->getBody());
     }
 
     /**

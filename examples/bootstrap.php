@@ -123,4 +123,12 @@ class SpotifyExample
             );
         }
     }
+
+    /**
+     * @param stdClass $object
+     */
+    public static function printStdClass(\stdClass $object)
+    {
+        print_r($object);
+    }
 }
