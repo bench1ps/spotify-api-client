@@ -1,4 +1,4 @@
-# Spotify API SDK
+# Spotify Web API PHP SDK
 
 This lib provides a PHP client to interact with the Spotify Web API.
 
