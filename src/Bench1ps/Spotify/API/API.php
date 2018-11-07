@@ -24,6 +24,7 @@ class API extends Client
     const ENDPOINT_USER_DEVICES = '/v1/me/player/devices';
     const ENDPOINT_PAUSE_PLAYBACK = '/v1/me/player/pause';
     const ENDPOINT_START_OR_RESUME_PLAYBACK = '/v1/me/player/play';
+    const ENDPOINT_NEXT_TRACK = '/v1/me/player/next';
     const ENDPOINT_TRANSFER_PLAYBACK = '/v1/me/player';
     const ENDPOINT_TRACK_ANALYSIS = '/v1/audio-analysis/{track_id}';
 
@@ -416,11 +417,24 @@ class API extends Client
             'json' => [
                 'device_ids' => [
                     $deviceId,
-                ]
+                ],
+                'play' => true,
             ],
         ]);
 
         $this->request('PUT', self::ENDPOINT_TRANSFER_PLAYBACK, $options);
+    }
+
+    /**
+     * Skip current playback to the next track.
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function nextTrack()
+    {
+        $this->assertSession();
+        $this->request('POST', self::ENDPOINT_NEXT_TRACK, $this->getDefaultOptions());
     }
 
     /**

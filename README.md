@@ -5,7 +5,7 @@ This lib provides a PHP client to interact with the Spotify Web API.
 ## Installation
 
 ```
-composer require bench1ps/spotify-api-client
+composer require bfraud/spotify-web-api-php-sdk
 ```
 
 ## Working with the API
