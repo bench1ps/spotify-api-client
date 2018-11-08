@@ -79,7 +79,7 @@ class Authorization extends Client
                 $this->configuration['client_secret'],
                 'basic',
             ],
-            'form_params' => [
+            'body' => [
                 'grant_type' => 'authorization_code',
                 'code' => $authorizationCode,
                 'redirect_uri' => $this->configuration['redirect_uri'],
@@ -105,7 +105,7 @@ class Authorization extends Client
                 $this->configuration['client_secret'],
                 'basic',
             ],
-            'form_params' => [
+            'body' => [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->sessionHandler->getCurrentSession()->getRefreshToken(),
             ],

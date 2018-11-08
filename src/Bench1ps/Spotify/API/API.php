@@ -396,7 +396,7 @@ class API extends Client
         }
 
         if ($position) {
-            $options['form_params']['position_ms'] = $position;
+            $options['body']['position_ms'] = $position;
         }
 
         $this->request('PUT', self::ENDPOINT_START_OR_RESUME_PLAYBACK, $options);
