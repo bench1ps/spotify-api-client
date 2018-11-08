@@ -1,10 +1,10 @@
 {
-    "name": "bench1ps/spotify-api-client",
+    "name": "bfraud/spotify-web-api-php-sdk",
     "description": "A library to interact with Spotify API",
     "authors": [
         {
             "name": "Benjamin Fraud",
-            "email": "me@bench1ps.com"
+            "email": "benjamin.fraud@gmail.com"
         }
     ],
     "require": {
