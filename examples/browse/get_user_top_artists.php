@@ -15,7 +15,7 @@ try {
     $result = $API->getCurrentUserTopArtists($nbArtists, $offset, $timeRange);
 
     SpotifyExample::printSuccess(sprintf('Found %d top artists (%s):', count($result->items), $timeRange));
-    SpotifyExample::printList($result->items, function (stdClass $artist) {
+    SpotifyExample::printList($result->items, false, function (stdClass $artist) {
         return sprintf('%s (%s)', $artist->name, $artist->external_urls->spotify);
     });
 } catch (SpotifyException $e) {

@@ -6,7 +6,7 @@ require __DIR__.'/../bootstrap.php';
 use Bench1ps\Spotify\Exception\SpotifyException;
 
 try {
-    $authentication = SpotifyExample::loadAuthorization();
+    $authentication = SpotifyExample::loadAuthorization(true);
     $authentication->refreshToken();
     SpotifyExample::$credentials['access_token'] = $authentication->getCurrentSession()->getAccessToken();
     SpotifyExample::dump();

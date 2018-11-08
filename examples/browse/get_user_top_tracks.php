@@ -15,7 +15,7 @@ try {
     $result = $API->getCurrentUserTopTracks($limit, $offset, $timeRange);
 
     SpotifyExample::printSuccess(sprintf('Found %d top tracks (%s):', count($result->items), $timeRange));
-    SpotifyExample::printList($result->items, function (stdClass $track) {
+    SpotifyExample::printList($result->items, false, function (stdClass $track) {
         return sprintf('%s by %s (%s)', $track->name, $track->artists[0]->name, $track->external_urls->spotify);
     });
 } catch (SpotifyException $e) {

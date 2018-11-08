@@ -29,7 +29,7 @@ try {
     $result = $API->getRecommendations($nbRecommendations, null, $trackAttributes, $seedArtists, $seedGenres, $seedTracks);
 
     SpotifyExample::printSuccess(sprintf('Found %d recommended tracks:', count($result->tracks)));
-    SpotifyExample::printList($result->tracks, function(stdClass $track) {
+    SpotifyExample::printList($result->tracks, false, function(stdClass $track) {
         return sprintf('%s, by %s (%s)', $track->name, $track->artists[0]->name, $track->external_urls->spotify);
     });
 

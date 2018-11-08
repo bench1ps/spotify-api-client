@@ -15,16 +15,24 @@ class SpotifyExample
     static $credentials;
 
     /**
+     * @param bool $withSession
+     *
      * @return Authorization
      * @throws \Bench1ps\Spotify\Session\Exception\SessionException
      */
-    public static function loadAuthorization(): Authorization
+    public static function loadAuthorization($withSession = false): Authorization
     {
         $credentials = self::loadCredentials();
         $sessionHandler = new SessionHandler();
-        $sessionHandler->addSession(
-            new Session('foobar', $credentials['access_token'], $credentials['refresh_token'], 3600)
-        );
+
+        if ($withSession) {
+            $sessionHandler->addSession(new Session(
+                uniqid(),
+                self::$credentials['access_token'],
+                self::$credentials['refresh_token'],
+                3600
+            ));
+        }
 
         return new Authorization([
             'client_id' => $credentials['client_id'],
