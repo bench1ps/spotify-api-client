@@ -17,6 +17,7 @@ class API extends Client
     const ENDPOINT_ME_TOP_ARTISTS = '/v1/me/top/artists';
     const ENDPOINT_ME_TOP_TRACKS = '/v1/me/top/tracks';
     const ENDPOINT_RECOMMENDATIONS = 'v1/recommendations';
+    const ENDPOINT_FOLLOW_PLAYLIST = 'v1/playlists/{playlist_id}/followers';
     const ENDPOINT_PLAYLIST_CREATE = '/v1/users/{user_id}/playlists';
     const ENDPOINT_PLAYLIST_ADD_TRACKS = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
     const ENDPOINT_USER_PUBLIC_PROFILE = '/v1/users/{user_id}';
@@ -90,7 +91,7 @@ class API extends Client
      */
     public function __construct(array $configuration, SessionHandler $sessionHandler)
     {
-        parent::__construct($configuration['base_url'], $configuration['proxy']);
+        parent::__construct($configuration['base_url'], $configuration['proxy'] ?? null);
 
         $this->sessionHandler = $sessionHandler;
     }
@@ -262,18 +263,31 @@ class API extends Client
     }
 
     /**
+     * @param string $playlistId
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function followPlaylist(string $playlistId)
+    {
+        $this->assertSession();
+        $this->request('PUT', str_replace('{playlist_id}', $playlistId, self::ENDPOINT_FOLLOW_PLAYLIST), $this->getDefaultOptions());
+    }
+
+    /**
      * Creates a playlist on the user's account.
      *
-     * @param string $name
-     * @param bool   $public
-     * @param null   $userId
-     *
-     * @throws NoActiveSessionException
-     * @throws ClientException
+     * @param string      $name
+     * @param bool        $public
+     * @param bool        $collaborative
+     * @param string|null $userId
+     * @param string|null $description
      *
      * @return \stdClass
+     * @throws ClientException
+     * @throws NoActiveSessionException
      */
-    public function createUserPlaylist($name, $public = true, $userId = null)
+    public function createUserPlaylist($name, $public = true, bool $collaborative = false, ?string $userId = null, ?string $description = null)
     {
         $this->assertSession();
         if (null === $userId) {
@@ -284,6 +298,8 @@ class API extends Client
             'json' => [
                 'name' => $name,
                 'public' => $public,
+                'collaborative' => $collaborative,
+                'description' => $description,
             ],
         ]);
 
