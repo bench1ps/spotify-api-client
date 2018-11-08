@@ -21,6 +21,7 @@ class API extends Client
     const ENDPOINT_PLAYLIST_ADD_TRACKS = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
     const ENDPOINT_USER_PUBLIC_PROFILE = '/v1/users/{user_id}';
     const ENDPOINT_USER_DEVICES = '/v1/me/player/devices';
+    const ENDPOINT_PLAYBACK_INFO = '/v1/me/player';
     const ENDPOINT_PAUSE_PLAYBACK = '/v1/me/player/pause';
     const ENDPOINT_START_OR_RESUME_PLAYBACK = '/v1/me/player/play';
     const ENDPOINT_NEXT_TRACK = '/v1/me/player/next';
@@ -336,6 +337,19 @@ class API extends Client
     {
         $this->assertSession();
         $response = $this->request('GET', self::ENDPOINT_USER_DEVICES, $this->getDefaultOptions());
+
+        return json_decode($response->getBody());
+    }
+
+    /**
+     * @return \stdClass
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function getPlaybackInfo(): \stdClass
+    {
+        $this->assertSession();
+        $response = $this->request('GET', self::ENDPOINT_PLAYBACK_INFO, $this->getDefaultOptions());
 
         return json_decode($response->getBody());
     }
