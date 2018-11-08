@@ -25,7 +25,7 @@ class Authorization extends Client
      */
     public function __construct(array $configuration, SessionHandler $sessionHandler)
     {
-        parent::__construct($configuration['base_url'], $configuration['proxy']);
+        parent::__construct($configuration['base_url'], $configuration['proxy'] ?? null);
 
         $this->configuration = $configuration;
         $this->sessionHandler = $sessionHandler;

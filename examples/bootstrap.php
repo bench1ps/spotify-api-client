@@ -38,6 +38,7 @@ class SpotifyExample
             'client_id' => $credentials['client_id'],
             'client_secret' => $credentials['client_secret'],
             'redirect_uri' => $credentials['redirect_uri'],
+            'base_url' => 'https://accounts.spotify.com'
         ], $sessionHandler);
     }
 

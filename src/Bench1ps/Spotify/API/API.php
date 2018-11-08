@@ -20,6 +20,7 @@ class API extends Client
     const ENDPOINT_FOLLOW_PLAYLIST = 'v1/playlists/{playlist_id}/followers';
     const ENDPOINT_PLAYLIST_CREATE = '/v1/users/{user_id}/playlists';
     const ENDPOINT_PLAYLIST_ADD_TRACKS = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
+    const ENDPOINT_PLAYLIST_UPLOAD_IMAGE = '/v1/playlists/{playlist_id}/images';
     const ENDPOINT_USER_PUBLIC_PROFILE = '/v1/users/{user_id}';
     const ENDPOINT_USER_DEVICES = '/v1/me/player/devices';
     const ENDPOINT_PLAYBACK_INFO = '/v1/me/player';
@@ -343,6 +344,27 @@ class API extends Client
     }
 
     /**
+     * @param string $playlistId
+     * @param string $imageData
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function uploadPlaylistCoverImage(string $playlistId, string $imageData)
+    {
+        $this->assertSession();
+
+        $options = array_merge($this->getDefaultOptions(), [
+            'headers' => [
+                'Content-Type' => 'image/jpeg',
+            ],
+            'body' => $imageData,
+        ]);
+
+        $this->request('PUT', str_replace('{playlist_id}', $playlistId, self::ENDPOINT_PLAYLIST_UPLOAD_IMAGE), $options);
+    }
+
+    /**
      * Returns the current user's available devices.
      *
      * @return \stdClass
@@ -358,11 +380,11 @@ class API extends Client
     }
 
     /**
-     * @return \stdClass
+     * @return \stdClass|null
      * @throws ClientException
      * @throws NoActiveSessionException
      */
-    public function getPlaybackInfo(): \stdClass
+    public function getPlaybackInfo(): ?\stdClass
     {
         $this->assertSession();
         $response = $this->request('GET', self::ENDPOINT_PLAYBACK_INFO, $this->getDefaultOptions());
