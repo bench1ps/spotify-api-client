@@ -14,13 +14,22 @@ abstract class Client
     /**
      * Client constructor.
      *
-     * @param string $baseURI
+     * @param string      $baseURI
+     * @param string|null $proxy
      */
-    public function __construct(string $baseURI)
+    public function __construct(string $baseURI, string $proxy = null)
     {
-        $this->client = new BaseClient([
+        $parameters = [
             'base_url' => $baseURI,
-        ]);
+        ];
+
+        if ($proxy) {
+            $parameters['defaults'] = [
+                'proxy' => $proxy,
+            ];
+        }
+
+        $this->client = new BaseClient($parameters);
     }
 
     /**

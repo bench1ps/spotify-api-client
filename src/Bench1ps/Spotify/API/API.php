@@ -12,7 +12,6 @@ class API extends Client
     /**
      * Supported API endpoints.
      */
-    const BASE_URI = 'https://api.spotify.com';
     const ENDPOINT_GET_ALBUM = '/v1/albums/{album_id}';
     const ENDPOINT_ME = '/v1/me';
     const ENDPOINT_ME_TOP_ARTISTS = '/v1/me/top/artists';
@@ -85,11 +84,12 @@ class API extends Client
     private $sessionHandler;
 
     /**
+     * @param array          $configuration
      * @param SessionHandler $sessionHandler
      */
-    public function __construct(SessionHandler $sessionHandler)
+    public function __construct(array $configuration, SessionHandler $sessionHandler)
     {
-        parent::__construct(self::BASE_URI);
+        parent::__construct($configuration['base_url'], $configuration['proxy']);
 
         $this->sessionHandler = $sessionHandler;
     }
