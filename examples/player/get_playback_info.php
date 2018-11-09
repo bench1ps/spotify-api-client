@@ -9,8 +9,12 @@ try {
     $API = SpotifyExample::loadAPI();
     $result = $API->getPlaybackInfo();
 
-    SpotifyExample::printSuccess('Current playback information:');
-    SpotifyExample::printStdClass($result->context);
+    if ($result) {
+        SpotifyExample::printSuccess('Current playback information:');
+        SpotifyExample::printStdClass($result->context);
+    } else {
+        SpotifyExample::printSuccess('No playback was found');
+    }
 } catch (SpotifyException $e) {
     SpotifyExample::printException($e);
 }

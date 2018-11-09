@@ -354,7 +354,7 @@ class API extends Client
     {
         $this->assertSession();
 
-        $options = array_merge($this->getDefaultOptions(), [
+        $options = array_merge_recursive($this->getDefaultOptions(), [
             'headers' => [
                 'Content-Type' => 'image/jpeg',
             ],
