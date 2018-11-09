@@ -22,6 +22,7 @@ $scopes = [
     'user-read-playback-state',
     'user-read-currently-playing',
     'user-modify-playback-state',
+    'ugc-image-upload',
 ];
 
 try {

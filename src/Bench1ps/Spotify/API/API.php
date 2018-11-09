@@ -12,16 +12,18 @@ class API extends Client
     /**
      * Supported API endpoints.
      */
-    const BASE_URI = 'https://api.spotify.com';
     const ENDPOINT_GET_ALBUM = '/v1/albums/{album_id}';
     const ENDPOINT_ME = '/v1/me';
     const ENDPOINT_ME_TOP_ARTISTS = '/v1/me/top/artists';
     const ENDPOINT_ME_TOP_TRACKS = '/v1/me/top/tracks';
     const ENDPOINT_RECOMMENDATIONS = 'v1/recommendations';
+    const ENDPOINT_FOLLOW_PLAYLIST = 'v1/playlists/{playlist_id}/followers';
     const ENDPOINT_PLAYLIST_CREATE = '/v1/users/{user_id}/playlists';
     const ENDPOINT_PLAYLIST_ADD_TRACKS = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
+    const ENDPOINT_PLAYLIST_UPLOAD_IMAGE = '/v1/playlists/{playlist_id}/images';
     const ENDPOINT_USER_PUBLIC_PROFILE = '/v1/users/{user_id}';
     const ENDPOINT_USER_DEVICES = '/v1/me/player/devices';
+    const ENDPOINT_PLAYBACK_INFO = '/v1/me/player';
     const ENDPOINT_PAUSE_PLAYBACK = '/v1/me/player/pause';
     const ENDPOINT_START_OR_RESUME_PLAYBACK = '/v1/me/player/play';
     const ENDPOINT_NEXT_TRACK = '/v1/me/player/next';
@@ -85,11 +87,12 @@ class API extends Client
     private $sessionHandler;
 
     /**
+     * @param array          $configuration
      * @param SessionHandler $sessionHandler
      */
-    public function __construct(SessionHandler $sessionHandler)
+    public function __construct(array $configuration, SessionHandler $sessionHandler)
     {
-        parent::__construct(self::BASE_URI);
+        parent::__construct($configuration['base_url'], $configuration['proxy'] ?? null);
 
         $this->sessionHandler = $sessionHandler;
     }
@@ -261,18 +264,31 @@ class API extends Client
     }
 
     /**
+     * @param string $playlistId
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function followPlaylist(string $playlistId)
+    {
+        $this->assertSession();
+        $this->request('PUT', str_replace('{playlist_id}', $playlistId, self::ENDPOINT_FOLLOW_PLAYLIST), $this->getDefaultOptions());
+    }
+
+    /**
      * Creates a playlist on the user's account.
      *
-     * @param string $name
-     * @param bool   $public
-     * @param null   $userId
-     *
-     * @throws NoActiveSessionException
-     * @throws ClientException
+     * @param string      $name
+     * @param bool        $public
+     * @param bool        $collaborative
+     * @param string|null $userId
+     * @param string|null $description
      *
      * @return \stdClass
+     * @throws ClientException
+     * @throws NoActiveSessionException
      */
-    public function createUserPlaylist($name, $public = true, $userId = null)
+    public function createUserPlaylist($name, $public = true, bool $collaborative = false, ?string $userId = null, ?string $description = null)
     {
         $this->assertSession();
         if (null === $userId) {
@@ -283,6 +299,8 @@ class API extends Client
             'json' => [
                 'name' => $name,
                 'public' => $public,
+                'collaborative' => $collaborative,
+                'description' => $description,
             ],
         ]);
 
@@ -326,6 +344,27 @@ class API extends Client
     }
 
     /**
+     * @param string $playlistId
+     * @param string $imageData
+     *
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function uploadPlaylistCoverImage(string $playlistId, string $imageData)
+    {
+        $this->assertSession();
+
+        $options = array_merge_recursive($this->getDefaultOptions(), [
+            'headers' => [
+                'Content-Type' => 'image/jpeg',
+            ],
+            'body' => $imageData,
+        ]);
+
+        $this->request('PUT', str_replace('{playlist_id}', $playlistId, self::ENDPOINT_PLAYLIST_UPLOAD_IMAGE), $options);
+    }
+
+    /**
      * Returns the current user's available devices.
      *
      * @return \stdClass
@@ -336,6 +375,19 @@ class API extends Client
     {
         $this->assertSession();
         $response = $this->request('GET', self::ENDPOINT_USER_DEVICES, $this->getDefaultOptions());
+
+        return json_decode($response->getBody());
+    }
+
+    /**
+     * @return \stdClass|null
+     * @throws ClientException
+     * @throws NoActiveSessionException
+     */
+    public function getPlaybackInfo(): ?\stdClass
+    {
+        $this->assertSession();
+        $response = $this->request('GET', self::ENDPOINT_PLAYBACK_INFO, $this->getDefaultOptions());
 
         return json_decode($response->getBody());
     }
@@ -396,7 +448,7 @@ class API extends Client
         }
 
         if ($position) {
-            $options['form_params']['position_ms'] = $position;
+            $options['body']['position_ms'] = $position;
         }
 
         $this->request('PUT', self::ENDPOINT_START_OR_RESUME_PLAYBACK, $options);

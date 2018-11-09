@@ -10,7 +10,6 @@ use Bench1ps\Spotify\Session\SessionHandler;
 
 class Authorization extends Client
 {
-    const BASE_URI = 'https://accounts.spotify.com';
     const ENDPOINT_AUTHORIZATION_FLOW = 'authorize';
     const ENDPOINT_TOKEN = 'api/token';
 
@@ -26,7 +25,7 @@ class Authorization extends Client
      */
     public function __construct(array $configuration, SessionHandler $sessionHandler)
     {
-        parent::__construct(self::BASE_URI);
+        parent::__construct($configuration['base_url'], $configuration['proxy'] ?? null);
 
         $this->configuration = $configuration;
         $this->sessionHandler = $sessionHandler;
@@ -62,7 +61,7 @@ class Authorization extends Client
             $params['state'] = $state;
         }
 
-        return sprintf('%s/%s?%s', self::BASE_URI, self::ENDPOINT_AUTHORIZATION_FLOW, http_build_query($params));
+        return sprintf('%s/%s?%s', $this->configuration['base_url'], self::ENDPOINT_AUTHORIZATION_FLOW, http_build_query($params));
     }
 
     /**
@@ -79,7 +78,7 @@ class Authorization extends Client
                 $this->configuration['client_secret'],
                 'basic',
             ],
-            'form_params' => [
+            'body' => [
                 'grant_type' => 'authorization_code',
                 'code' => $authorizationCode,
                 'redirect_uri' => $this->configuration['redirect_uri'],
@@ -105,7 +104,7 @@ class Authorization extends Client
                 $this->configuration['client_secret'],
                 'basic',
             ],
-            'form_params' => [
+            'body' => [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->sessionHandler->getCurrentSession()->getRefreshToken(),
             ],

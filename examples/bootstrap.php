@@ -38,6 +38,7 @@ class SpotifyExample
             'client_id' => $credentials['client_id'],
             'client_secret' => $credentials['client_secret'],
             'redirect_uri' => $credentials['redirect_uri'],
+            'base_url' => 'https://accounts.spotify.com'
         ], $sessionHandler);
     }
 
@@ -51,7 +52,9 @@ class SpotifyExample
         $sessionHandler = new SessionHandler();
         $sessionHandler->addSession(new Session('foobar', $credentials['access_token'], '', 3600));
 
-        return new API($sessionHandler);
+        return new API([
+            'base_url' => 'https://api.spotify.com',
+        ], $sessionHandler);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Bench1ps\Spotify;
 
 use Bench1ps\Spotify\Exception\ClientException;
 use GuzzleHttp\Client as BaseClient;
-use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Message\ResponseInterface;
 
 abstract class Client
 {
@@ -14,13 +14,22 @@ abstract class Client
     /**
      * Client constructor.
      *
-     * @param string $baseURI
+     * @param string      $baseURI
+     * @param string|null $proxy
      */
-    public function __construct(string $baseURI)
+    public function __construct(string $baseURI, string $proxy = null)
     {
-        $this->client = new BaseClient([
-            'base_uri' => $baseURI,
-        ]);
+        $parameters = [
+            'base_url' => $baseURI,
+        ];
+
+        if ($proxy) {
+            $parameters['defaults'] = [
+                'proxy' => $proxy,
+            ];
+        }
+
+        $this->client = new BaseClient($parameters);
     }
 
     /**
@@ -34,7 +43,9 @@ abstract class Client
     protected function request($method, $path, array $options = []): ResponseInterface
     {
         try {
-            return $this->client->request($method, $path, $options);
+            $request = $this->client->createRequest($method, $path, $options);
+
+            return $this->client->send($request);
         } catch (\Exception $e) {
             throw new ClientException($path, $e);
         }
