@@ -3,7 +3,7 @@
 
 require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 // Start or resume current context on active device.
 $deviceId = null;

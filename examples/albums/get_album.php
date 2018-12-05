@@ -3,7 +3,7 @@
 
 require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 /** @var string $albumId The Spotify id of the album to get. */
 $albumId = '09ZGdaL9F1eSqKS8U9sKFt'; // Mozart: Requiem, by Wolfgang Amadeus Mozart.

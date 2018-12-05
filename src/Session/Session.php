@@ -1,6 +1,6 @@
 <?php
 
-namespace Bench1ps\Spotify\Session;
+namespace Spotify\Session;
 
 class Session
 {

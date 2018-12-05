@@ -1,8 +1,8 @@
 <?php
 
-namespace Bench1ps\Spotify\Session;
+namespace Spotify\Session;
 
-use Bench1ps\Spotify\Session\Exception\SessionException;
+use Spotify\Session\Exception\SessionException;
 
 class SessionHandler
 {

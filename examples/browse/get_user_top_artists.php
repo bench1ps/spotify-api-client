@@ -3,8 +3,8 @@
 
 require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\API\API;
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\API\API;
+use Spotify\Exception\SpotifyException;
 
 $nbArtists = 10;
 $offset = 0;

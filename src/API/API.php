@@ -1,11 +1,11 @@
 <?php
 
-namespace Bench1ps\Spotify\API;
+namespace Spotify\API;
 
-use Bench1ps\Spotify\API\Exception\NoActiveSessionException;
-use Bench1ps\Spotify\Client;
-use Bench1ps\Spotify\Exception\ClientException;
-use Bench1ps\Spotify\Session\SessionHandler;
+use Spotify\API\Exception\NoActiveSessionException;
+use Spotify\Client;
+use Spotify\Exception\ClientException;
+use Spotify\Session\SessionHandler;
 
 class API extends Client
 {

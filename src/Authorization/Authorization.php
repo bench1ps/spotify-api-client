@@ -1,12 +1,12 @@
 <?php
 
-namespace Bench1ps\Spotify\Authorization;
+namespace Spotify\Authorization;
 
-use Bench1ps\Spotify\Client;
-use Bench1ps\Spotify\Exception\ClientException;
-use Bench1ps\Spotify\Session\Exception\SessionException;
-use Bench1ps\Spotify\Session\Session;
-use Bench1ps\Spotify\Session\SessionHandler;
+use Spotify\Client;
+use Spotify\Exception\ClientException;
+use Spotify\Session\Exception\SessionException;
+use Spotify\Session\Session;
+use Spotify\Session\SessionHandler;
 
 class Authorization extends Client
 {

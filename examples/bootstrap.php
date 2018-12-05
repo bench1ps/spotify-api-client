@@ -2,10 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Bench1ps\Spotify\Session\SessionHandler;
-use Bench1ps\Spotify\Session\Session;
-use Bench1ps\Spotify\Authorization\Authorization;
-use Bench1ps\Spotify\API\API;
+use Spotify\Session\SessionHandler;
+use Spotify\Session\Session;
+use Spotify\Authorization\Authorization;
+use Spotify\API\API;
 
 class SpotifyExample
 {
@@ -18,7 +18,7 @@ class SpotifyExample
      * @param bool $withSession
      *
      * @return Authorization
-     * @throws \Bench1ps\Spotify\Session\Exception\SessionException
+     * @throws \Spotify\Session\Exception\SessionException
      */
     public static function loadAuthorization($withSession = false): Authorization
     {
@@ -44,7 +44,7 @@ class SpotifyExample
 
     /**
      * @return API
-     * @throws \Bench1ps\Spotify\Session\Exception\SessionException
+     * @throws \Spotify\Session\Exception\SessionException
      */
     public static function loadAPI(): API
     {

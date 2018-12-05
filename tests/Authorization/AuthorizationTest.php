@@ -1,6 +1,6 @@
 <?php
 
-namespace Bench1ps\Spotify\Authorization;
+namespace Spotify\Authorization;
 
 class AuthorizationTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->sessionHandler = $this->prophesize('\Bench1ps\Spotify\Session\SessionHandler');
+        $this->sessionHandler = $this->prophesize('\Spotify\Session\SessionHandler');
         $this->authorization = new Authorization(self::$configuration, $this->sessionHandler->reveal());
     }
 

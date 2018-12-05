@@ -1,8 +1,8 @@
 <?php
 
-namespace Bench1ps\Spotify\API\Exception;
+namespace Spotify\API\Exception;
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 /**
  * Class APIException

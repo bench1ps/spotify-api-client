@@ -3,7 +3,7 @@
 
 require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 /** @var string $trackId The Spotify id of the track to analyse. */
 $trackId = '2ZuFFeKzcZvSPn45SGW7iF'; // Volcano (feat. Phoene Somsavath), by Saycet.

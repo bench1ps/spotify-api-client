@@ -3,7 +3,7 @@
 
 require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 try {
     $authentication = SpotifyExample::loadAuthorization(true);

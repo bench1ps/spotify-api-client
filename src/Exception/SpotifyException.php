@@ -1,6 +1,6 @@
 <?php
 
-namespace Bench1ps\Spotify\Exception;
+namespace Spotify\Exception;
 
 /**
  * Class SpotifyException

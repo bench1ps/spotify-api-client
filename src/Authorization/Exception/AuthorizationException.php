@@ -1,8 +1,8 @@
 <?php
 
-namespace Bench1ps\Spotify\Authorization\Exception;
+namespace Spotify\Authorization\Exception;
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 /**
  * Class AuthorizationException

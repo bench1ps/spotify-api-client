@@ -1,8 +1,8 @@
 <?php
 
-namespace Bench1ps\Spotify;
+namespace Spotify;
 
-use Bench1ps\Spotify\Exception\ClientException;
+use Spotify\Exception\ClientException;
 use GuzzleHttp\Client as BaseClient;
 use GuzzleHttp\Message\ResponseInterface;
 

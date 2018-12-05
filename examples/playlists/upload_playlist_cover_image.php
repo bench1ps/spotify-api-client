@@ -3,7 +3,7 @@
 
 require __DIR__.'/../bootstrap.php';
 
-use Bench1ps\Spotify\Exception\SpotifyException;
+use Spotify\Exception\SpotifyException;
 
 /** @var string $playlistId The Spotify identifier of the playlist. */
 $playlistId = '7a6yKYLGE17RXsEpMT8QqB';

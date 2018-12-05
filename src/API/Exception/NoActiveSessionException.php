@@ -1,6 +1,6 @@
 <?php
 
-namespace Bench1ps\Spotify\API\Exception;
+namespace Spotify\API\Exception;
 
 class NoActiveSessionException extends APIException
 {
